@@ -2,7 +2,7 @@
 ; FormDB Debugger - Ecosystem Position
 
 (ecosystem
-  (version "1.0")
+  (version "1.1")
   (name "formdb-debugger")
   (type "tool")
   (purpose "Verified database recovery and introspection for FormDB")
@@ -15,31 +15,49 @@
   (related-projects
     (project "formdb"
       (relationship sibling-standard)
-      (description "The core database that this debugger supports")
+      (url "https://github.com/hyperpolymath/formdb")
+      (description "The core narrative-first database that this debugger supports")
       (integration "Reads FormDB storage format, validates FQLdt constraints"))
 
     (project "fqldt"
       (relationship sibling-standard)
-      (description "The type system that defines constraints")
+      (url "https://github.com/hyperpolymath/fqldt")
+      (description "The dependently-typed query language that defines constraints")
       (integration "Uses FQLdt types in Lean 4 proofs"))
 
     (project "formdb-studio"
       (relationship sibling-standard)
-      (description "Visual interface for FormDB")
+      (url "https://github.com/hyperpolymath/formdb-studio")
+      (description "Zero-friction visual interface for FormDB")
       (integration "Debugger can be launched from Studio for recovery"))
+
+    (project "bofig"
+      (relationship potential-consumer)
+      (url "https://github.com/hyperpolymath/bofig")
+      (description "Evidence graph for investigative journalism")
+      (integration "Debug and recover evidence graph data with provenance"))
+
+    (project "zotero-formdb"
+      (relationship potential-consumer)
+      (url "https://github.com/hyperpolymath/zotero-formdb")
+      (description "Post-truth reference manager with PROMPT scores")
+      (integration "Debug journal corruption, verify PROMPT score integrity"))
 
     (project "lean4"
       (relationship dependency)
+      (url "https://github.com/leanprover/lean4")
       (description "Theorem prover for recovery proofs")
       (integration "Core proof library written in Lean 4"))
 
     (project "idris2"
       (relationship dependency)
+      (url "https://github.com/idris-lang/Idris2")
       (description "Dependently-typed language for REPL")
       (integration "Interactive shell and type-safe queries"))
 
     (project "ratatui"
       (relationship dependency)
+      (url "https://github.com/ratatui-org/ratatui")
       (description "Terminal UI library")
       (integration "TUI built with Ratatui")))
 
