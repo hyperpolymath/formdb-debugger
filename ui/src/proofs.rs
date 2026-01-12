@@ -50,34 +50,34 @@ pub fn proofs_for_operation(op: RecoveryOperationType) -> Vec<ProofReference> {
     match op {
         RecoveryOperationType::Insert => vec![
             ProofReference::new(
-                "FormDBDebugger.Proofs.Lossless",
+                "FormBDDebugger.Proofs.Lossless",
                 "insert_is_lossless",
                 "INSERT preserves all existing rows"
             ),
             ProofReference::new(
-                "FormDBDebugger.Proofs.Lossless",
+                "FormBDDebugger.Proofs.Lossless",
                 "insert_is_reversible",
                 "INSERT can be undone via DELETE"
             ),
             ProofReference::new(
-                "FormDBDebugger.Proofs.FDPreserving",
+                "FormBDDebugger.Proofs.FDPreserving",
                 "insert_preserves_fds_if_compatible",
                 "INSERT preserves functional dependencies when row is compatible"
             ),
         ],
         RecoveryOperationType::Delete => vec![
             ProofReference::new(
-                "FormDBDebugger.Proofs.Lossless",
+                "FormBDDebugger.Proofs.Lossless",
                 "delete_with_archive_is_lossless",
                 "DELETE with archive preserves data (rows are archived, not lost)"
             ),
             ProofReference::new(
-                "FormDBDebugger.Proofs.FDPreserving",
+                "FormBDDebugger.Proofs.FDPreserving",
                 "delete_preserves_fds",
                 "DELETE always preserves functional dependencies"
             ),
             ProofReference::new(
-                "FormDBDebugger.Proofs.FDPreserving",
+                "FormBDDebugger.Proofs.FDPreserving",
                 "delete_snapshot_preserves_fds",
                 "DELETE at snapshot level preserves all FDs"
             ),
@@ -85,41 +85,41 @@ pub fn proofs_for_operation(op: RecoveryOperationType) -> Vec<ProofReference> {
         RecoveryOperationType::Update => vec![
             // UPDATE = DELETE + INSERT
             ProofReference::new(
-                "FormDBDebugger.Proofs.Lossless",
+                "FormBDDebugger.Proofs.Lossless",
                 "delete_with_archive_is_lossless",
                 "UPDATE's DELETE phase preserves data in archive"
             ),
             ProofReference::new(
-                "FormDBDebugger.Proofs.Lossless",
+                "FormBDDebugger.Proofs.Lossless",
                 "insert_is_lossless",
                 "UPDATE's INSERT phase preserves existing rows"
             ),
             ProofReference::new(
-                "FormDBDebugger.Proofs.Lossless",
+                "FormBDDebugger.Proofs.Lossless",
                 "lossless_compose",
                 "Composed operations (DELETE+INSERT) are lossless"
             ),
         ],
         RecoveryOperationType::Rollback => vec![
             ProofReference::new(
-                "FormDBDebugger.Proofs.Rollback",
+                "FormBDDebugger.Proofs.Rollback",
                 "transaction_rollback_correct",
                 "Transaction rollback restores previous state"
             ),
             ProofReference::new(
-                "FormDBDebugger.Proofs.Rollback",
+                "FormBDDebugger.Proofs.Rollback",
                 "migration_reversible",
                 "Migration with inverse is reversible"
             ),
         ],
         RecoveryOperationType::Migration => vec![
             ProofReference::new(
-                "FormDBDebugger.Proofs.Lossless",
+                "FormBDDebugger.Proofs.Lossless",
                 "lossless_compose",
                 "Multi-step migration preserves data"
             ),
             ProofReference::new(
-                "FormDBDebugger.Proofs.FDPreserving",
+                "FormBDDebugger.Proofs.FDPreserving",
                 "FDPreservingTransformation",
                 "Migration preserves all functional dependencies"
             ),

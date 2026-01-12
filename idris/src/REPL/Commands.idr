@@ -38,7 +38,7 @@ parseCommand _ = Nothing
 public export
 showHelp : IO ()
 showHelp = do
-  putStrLn "FormDB Debugger Commands:"
+  putStrLn "FormBD Debugger Commands:"
   putStrLn ""
   putStrLn "  connect <uri>     Connect to a database"
   putStrLn "  disconnect        Disconnect from database"

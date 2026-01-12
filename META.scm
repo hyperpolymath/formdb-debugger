@@ -1,9 +1,9 @@
 ; SPDX-License-Identifier: AGPL-3.0-or-later
-; FormDB Debugger - Meta Information
+; FormBD Debugger - Meta Information
 
 (meta
   (version "1.1")
-  (name "formdb-debugger")
+  (name "formbd-debugger")
   (media-type "application/meta+scheme")
 
   (architecture-decisions
@@ -69,7 +69,7 @@
 
     (testing
       (unit-tests "Property-based testing for proof correctness")
-      (integration "Test against real PostgreSQL, FormDB, and SQLite")
+      (integration "Test against real PostgreSQL, FormBD, and SQLite")
       (formal "Lean 4 proofs as executable tests")
       (repl "Idris 2 REPL tests for interactive scenarios"))
 

@@ -5,7 +5,7 @@ use crate::proofs;
 use crate::widgets::constraint_tree::ConstraintNode;
 use crate::widgets::recovery_plan::{RecoveryPlan, RecoveryStep};
 use crate::widgets::timeline::TimelineEntry;
-use formdb_debugger_postgres::{DatabaseEvent, EventType, SchemaInfo, ConstraintCheckResult};
+use formbd_debugger_postgres::{DatabaseEvent, EventType, SchemaInfo, ConstraintCheckResult};
 
 /// Current view in the debugger
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -117,7 +117,7 @@ impl App {
             'c' => {
                 if !self.connected {
                     self.input_mode = true;
-                    self.input_buffer = "postgres://formdb:formdb_dev@localhost/formdb_demo".to_string();
+                    self.input_buffer = "postgres://formbd:formbd_dev@localhost/formbd_demo".to_string();
                     self.status_message = "Enter connection string (Enter to confirm, Esc to cancel)".to_string();
                 }
             }

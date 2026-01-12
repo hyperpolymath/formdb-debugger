@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
-//! FormDB Debugger Terminal UI
+//! FormBD Debugger Terminal UI
 //!
 //! A Ratatui-based terminal interface for database debugging,
 //! recovery plan generation, and proof verification.
@@ -30,7 +30,7 @@ use widgets::constraint_tree::{ConstraintNode, ConstraintTreeWidget};
 use widgets::recovery_plan::RecoveryPlanWidget;
 use widgets::timeline::{TimelineEntry, TimelineWidget};
 
-/// FormDB Debugger - Proof-carrying database recovery
+/// FormBD Debugger - Proof-carrying database recovery
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
 struct Args {
@@ -38,7 +38,7 @@ struct Args {
     #[arg(short, long)]
     connect: Option<String>,
 
-    /// Database type (postgres, formdb, sqlite)
+    /// Database type (postgres, formbd, sqlite)
     #[arg(short = 't', long, default_value = "postgres")]
     db_type: String,
 
@@ -53,11 +53,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     if args.batch {
         // Batch mode - just run commands
-        println!("FormDB Debugger v0.1.0 (batch mode)");
+        println!("FormBD Debugger v0.1.0 (batch mode)");
         if let Some(conn) = &args.connect {
             println!("Connecting to: {}", conn);
             // Connect and dump schema
-            let mut pg = formdb_debugger_postgres::PostgresConnection::new(conn);
+            let mut pg = formbd_debugger_postgres::PostgresConnection::new(conn);
             pg.connect().await?;
             let schema = pg.introspect_schema().await?;
             println!("Database: {}", schema.database_name);
@@ -178,7 +178,7 @@ async fn run_app<B: ratatui::backend::Backend>(
 async fn connect_to_database(app: &mut App, conn_str: &str) {
     app.status_message = format!("Connecting to {}...", conn_str);
 
-    let mut conn = formdb_debugger_postgres::PostgresConnection::new(conn_str);
+    let mut conn = formbd_debugger_postgres::PostgresConnection::new(conn_str);
     match conn.connect().await {
         Ok(()) => {
             match conn.introspect_schema().await {
@@ -186,7 +186,7 @@ async fn connect_to_database(app: &mut App, conn_str: &str) {
                     app.set_connected(conn_str.to_string(), schema);
 
                     // Also load timeline events
-                    match formdb_debugger_postgres::get_recent_events(&conn).await {
+                    match formbd_debugger_postgres::get_recent_events(&conn).await {
                         Ok(events) => {
                             app.load_timeline_events(events);
                         }
@@ -213,9 +213,9 @@ async fn connect_to_database(app: &mut App, conn_str: &str) {
 
 async fn refresh_timeline(app: &mut App) {
     if let Some(conn_str) = &app.connection_string.clone() {
-        let mut conn = formdb_debugger_postgres::PostgresConnection::new(conn_str);
+        let mut conn = formbd_debugger_postgres::PostgresConnection::new(conn_str);
         if conn.connect().await.is_ok() {
-            if let Ok(events) = formdb_debugger_postgres::get_recent_events(&conn).await {
+            if let Ok(events) = formbd_debugger_postgres::get_recent_events(&conn).await {
                 app.load_timeline_events(events);
             }
         }
@@ -255,13 +255,13 @@ async fn run_diagnostics(app: &mut App) {
     app.start_diagnostics();
 
     // Connect and run constraint checks
-    let mut conn = formdb_debugger_postgres::PostgresConnection::new(conn_str);
+    let mut conn = formbd_debugger_postgres::PostgresConnection::new(conn_str);
     match conn.connect().await {
         Ok(()) => {
             // Get the full schema with PgConstraint type for checking
-            match formdb_debugger_postgres::schema::introspect_constraints(&conn).await {
+            match formbd_debugger_postgres::schema::introspect_constraints(&conn).await {
                 Ok(constraints) => {
-                    match formdb_debugger_postgres::check_all_constraints(&conn, &constraints).await {
+                    match formbd_debugger_postgres::check_all_constraints(&conn, &constraints).await {
                         Ok(results) => {
                             app.load_constraint_results(results);
                         }
@@ -340,7 +340,7 @@ fn render_header(f: &mut Frame, app: &App, area: Rect) {
         .unwrap_or("none");
 
     let title = Line::from(vec![
-        Span::styled("FormDB Debugger v0.1.0", Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD)),
+        Span::styled("FormBD Debugger v0.1.0", Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD)),
         Span::raw(" │ "),
         conn_status,
         Span::raw(" │ "),
@@ -395,7 +395,7 @@ fn render_home(f: &mut Frame, app: &App, area: Rect) {
     } else {
         vec![
             Line::from(""),
-            Line::from(Span::styled("Welcome to FormDB Debugger", Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD))),
+            Line::from(Span::styled("Welcome to FormBD Debugger", Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD))),
             Line::from(""),
             Line::from("A proof-carrying database recovery tool that ensures"),
             Line::from("lossless decomposition and constraint preservation."),
@@ -556,7 +556,7 @@ fn render_recover(f: &mut Frame, app: &App, area: Rect) {
 
 fn render_help(f: &mut Frame, area: Rect) {
     let help_text = vec![
-        Line::from(Span::styled("FormDB Debugger Help", Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD))),
+        Line::from(Span::styled("FormBD Debugger Help", Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD))),
         Line::from(""),
         Line::from(Span::styled("Navigation:", Style::default().add_modifier(Modifier::BOLD))),
         Line::from("  h       - Go to home view"),
@@ -581,7 +581,7 @@ fn render_help(f: &mut Frame, area: Rect) {
         Line::from("  Press R to refresh."),
         Line::from(""),
         Line::from(Span::styled("About:", Style::default().add_modifier(Modifier::BOLD))),
-        Line::from("  FormDB Debugger provides proof-carrying database"),
+        Line::from("  FormBD Debugger provides proof-carrying database"),
         Line::from("  recovery with Lean 4 verified decomposition."),
     ];
 

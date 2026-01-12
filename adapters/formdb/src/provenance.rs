@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
-//! FormDB provenance tracking
+//! FormBD provenance tracking
 
 use serde::{Deserialize, Serialize};
 
@@ -16,24 +16,24 @@ pub struct Provenance {
 
 /// Get provenance for a document
 pub fn get_provenance(
-    conn: &super::FormDBConnection,
+    conn: &super::FormBDConnection,
     document_id: &str,
-) -> Result<Provenance, super::FormDBError> {
+) -> Result<Provenance, super::FormBDError> {
     let _ = (conn, document_id);
     // TODO: Look up provenance from journal
-    Err(super::FormDBError::ProvenanceError(
+    Err(super::FormBDError::ProvenanceError(
         "Not implemented".to_string(),
     ))
 }
 
 /// Get full provenance chain (all modifications)
 pub fn get_provenance_chain(
-    conn: &super::FormDBConnection,
+    conn: &super::FormBDConnection,
     document_id: &str,
-) -> Result<Vec<Provenance>, super::FormDBError> {
+) -> Result<Vec<Provenance>, super::FormBDError> {
     let _ = (conn, document_id);
     // TODO: Trace all modifications in journal
-    Err(super::FormDBError::ProvenanceError(
+    Err(super::FormBDError::ProvenanceError(
         "Not implemented".to_string(),
     ))
 }

@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
-//! FormDB journal parsing
+//! FormBD journal parsing
 
 use serde::{Deserialize, Serialize};
 
-/// Magic number for FormDB journal entries
+/// Magic number for FormBD journal entries
 pub const MAGIC: [u8; 4] = *b"FMDB";
 
 /// A journal entry header
@@ -40,10 +40,10 @@ pub struct JournalEntry {
 }
 
 /// Parse journal entries from a segment file
-pub fn parse_segment(data: &[u8]) -> Result<Vec<JournalEntry>, super::FormDBError> {
+pub fn parse_segment(data: &[u8]) -> Result<Vec<JournalEntry>, super::FormBDError> {
     // TODO: Implement journal parsing
     if data.len() < 4 || &data[0..4] != MAGIC {
-        return Err(super::FormDBError::JournalError(
+        return Err(super::FormBDError::JournalError(
             "Invalid magic number".to_string(),
         ));
     }
@@ -51,7 +51,7 @@ pub fn parse_segment(data: &[u8]) -> Result<Vec<JournalEntry>, super::FormDBErro
 }
 
 /// Verify the Merkle chain of a journal
-pub fn verify_chain(entries: &[JournalEntry]) -> Result<bool, super::FormDBError> {
+pub fn verify_chain(entries: &[JournalEntry]) -> Result<bool, super::FormBDError> {
     // TODO: Verify prev_hash chain
     for window in entries.windows(2) {
         let _prev = &window[0];

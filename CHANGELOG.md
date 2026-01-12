@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to FormDB Debugger will be documented in this file.
+All notable changes to FormBD Debugger will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -48,4 +48,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - TUI framework: Ratatui 0.29 + Crossterm 0.28
 - Proof assistant: Lean 4
 
-[1.0.0]: https://github.com/hyperpolymath/formdb-debugger/releases/tag/v1.0.0
+[1.0.0]: https://github.com/hyperpolymath/formbd-debugger/releases/tag/v1.0.0

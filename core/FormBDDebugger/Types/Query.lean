@@ -19,11 +19,14 @@ inductive Value where
   | uuid : String → Value
   | json : String → Value
   | bytes : ByteArray → Value
-  deriving Repr
+  deriving Repr, DecidableEq, BEq
 
 /-- A row is a list of column-value pairs -/
 def Row := List (String × Value)
   deriving Repr
+
+instance : DecidableEq Row := inferInstanceAs (DecidableEq (List (String × Value)))
+instance : BEq Row := inferInstanceAs (BEq (List (String × Value)))
 
 /-- A unique row identifier -/
 structure RowId where

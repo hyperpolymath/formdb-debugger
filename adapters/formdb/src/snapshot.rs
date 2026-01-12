@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
-//! FormDB snapshot management
+//! FormBD snapshot management
 
 use serde::{Deserialize, Serialize};
 
@@ -17,21 +17,21 @@ pub struct Snapshot {
 /// Load a checkpoint snapshot
 pub fn load_checkpoint(
     path: impl AsRef<std::path::Path>,
-) -> Result<Snapshot, super::FormDBError> {
+) -> Result<Snapshot, super::FormBDError> {
     let _ = path;
     // TODO: Load checkpoint file
-    Err(super::FormDBError::SnapshotError(
+    Err(super::FormBDError::SnapshotError(
         "Not implemented".to_string(),
     ))
 }
 
 /// Create a snapshot at the current journal position
 pub fn create_snapshot(
-    conn: &super::FormDBConnection,
-) -> Result<Snapshot, super::FormDBError> {
+    conn: &super::FormBDConnection,
+) -> Result<Snapshot, super::FormBDError> {
     let _ = conn;
     // TODO: Create snapshot from current state
-    Err(super::FormDBError::SnapshotError(
+    Err(super::FormBDError::SnapshotError(
         "Not implemented".to_string(),
     ))
 }

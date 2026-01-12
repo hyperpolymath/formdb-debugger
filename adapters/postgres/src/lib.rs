@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
-//! PostgreSQL adapter for FormDB Debugger
+//! PostgreSQL adapter for FormBD Debugger
 //!
 //! Provides schema introspection, WAL parsing, and transaction log extraction
 //! for PostgreSQL databases.

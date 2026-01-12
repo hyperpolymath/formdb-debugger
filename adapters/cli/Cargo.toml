@@ -1,17 +1,22 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 [package]
-name = "formbd-debugger-sqlite"
-description = "SQLite adapter for FormBD Debugger (testing)"
+name = "formdb-debugger-cli"
+description = "CLI bridge for FormDB Debugger IPC"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
 repository.workspace = true
 
+[[bin]]
+name = "fdb-debug"
+path = "src/main.rs"
+
 [dependencies]
+formdb-debugger-postgres = { path = "../postgres" }
 tokio.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 thiserror.workspace = true
 tracing.workspace = true
-rusqlite = { version = "0.32", features = ["bundled"] }
+clap = { version = "4.5", features = ["derive"] }

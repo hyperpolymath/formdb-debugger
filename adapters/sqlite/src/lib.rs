@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
-//! SQLite adapter for FormDB Debugger
+//! SQLite adapter for FormBD Debugger
 //!
 //! Provides a simple adapter for testing and development.
-//! SQLite is not recommended for production use with FormDB.
+//! SQLite is not recommended for production use with FormBD.
 
 use thiserror::Error;
 

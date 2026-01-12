@@ -1,11 +1,11 @@
 ; SPDX-License-Identifier: AGPL-3.0-or-later
-; FormDB Debugger - Ecosystem Position
+; FormBD Debugger - Ecosystem Position
 
 (ecosystem
   (version "1.1")
-  (name "formdb-debugger")
+  (name "formbd-debugger")
   (type "tool")
-  (purpose "Verified database recovery and introspection for FormDB")
+  (purpose "Verified database recovery and introspection for FormBD")
 
   (position-in-ecosystem
     (role "Developer/DBA tool for database troubleshooting")
@@ -13,11 +13,11 @@
     (users "Database administrators, developers, auditors"))
 
   (related-projects
-    (project "formdb"
+    (project "formbd"
       (relationship sibling-standard)
-      (url "https://github.com/hyperpolymath/formdb")
+      (url "https://github.com/hyperpolymath/formbd")
       (description "The core narrative-first database that this debugger supports")
-      (integration "Reads FormDB storage format, validates FQLdt constraints"))
+      (integration "Reads FormBD storage format, validates FQLdt constraints"))
 
     (project "fqldt"
       (relationship sibling-standard)
@@ -25,10 +25,10 @@
       (description "The dependently-typed query language that defines constraints")
       (integration "Uses FQLdt types in Lean 4 proofs"))
 
-    (project "formdb-studio"
+    (project "formbd-studio"
       (relationship sibling-standard)
-      (url "https://github.com/hyperpolymath/formdb-studio")
-      (description "Zero-friction visual interface for FormDB")
+      (url "https://github.com/hyperpolymath/formbd-studio")
+      (description "Zero-friction visual interface for FormBD")
       (integration "Debugger can be launched from Studio for recovery"))
 
     (project "bofig"
@@ -37,9 +37,9 @@
       (description "Evidence graph for investigative journalism")
       (integration "Debug and recover evidence graph data with provenance"))
 
-    (project "zotero-formdb"
+    (project "zotero-formbd"
       (relationship potential-consumer)
-      (url "https://github.com/hyperpolymath/zotero-formdb")
+      (url "https://github.com/hyperpolymath/zotero-formbd")
       (description "Post-truth reference manager with PROMPT scores")
       (integration "Debug journal corruption, verify PROMPT score integrity"))
 
