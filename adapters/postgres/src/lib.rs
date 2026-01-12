@@ -11,6 +11,7 @@ use tracing::{info, warn, instrument};
 pub mod schema;
 pub mod wal;
 pub mod transaction;
+pub mod constraint_check;
 
 /// Errors that can occur when interacting with PostgreSQL
 #[derive(Error, Debug)]
@@ -37,6 +38,48 @@ impl From<tokio_postgres::Error> for PostgresError {
     }
 }
 
+// Re-export schema types for CLI
+pub use schema::{DatabaseSchema, PgTable, PgColumn, PgConstraint, ConstraintType, FunctionalDependency};
+
+// Re-export transaction/event types for TUI
+pub use transaction::{DatabaseEvent, EventType, TableStats, ActivityEntry, get_recent_events, get_table_stats};
+
+// Re-export constraint checking types
+pub use constraint_check::{ConstraintViolation, ConstraintCheckResult, check_all_constraints, check_constraint};
+
+/// Simplified schema output for IPC
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct SchemaInfo {
+    pub database_name: String,
+    pub tables: Vec<TableInfo>,
+    pub constraints: Vec<ConstraintInfo>,
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct TableInfo {
+    pub schema_name: String,
+    pub name: String,
+    pub columns: Vec<ColumnInfo>,
+    pub primary_key: Vec<String>,
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct ColumnInfo {
+    pub name: String,
+    pub data_type: String,
+    pub nullable: bool,
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct ConstraintInfo {
+    pub name: String,
+    pub constraint_type: String,
+    pub table_name: String,
+    pub columns: Vec<String>,
+    pub foreign_table: Option<String>,
+    pub foreign_columns: Option<Vec<String>>,
+}
+
 /// PostgreSQL database connection with actual tokio-postgres client
 pub struct PostgresConnection {
     /// Connection string for reconnection
@@ -49,7 +92,24 @@ pub struct PostgresConnection {
 
 impl PostgresConnection {
     /// Create a new connection (not yet connected)
-    pub fn new(connection_string: &str) -> Result<Self, PostgresError> {
+    /// Panics-free version that parses connection string
+    pub fn new(connection_string: &str) -> Self {
+        // Parse connection string to extract database name
+        let database_name = connection_string
+            .parse::<Config>()
+            .ok()
+            .and_then(|c| c.get_dbname().map(|s| s.to_string()))
+            .unwrap_or_else(|| "postgres".to_string());
+
+        Self {
+            connection_string: connection_string.to_string(),
+            client: None,
+            database_name,
+        }
+    }
+
+    /// Create a new connection with validation
+    pub fn try_new(connection_string: &str) -> Result<Self, PostgresError> {
         // Parse connection string to extract database name
         let config: Config = connection_string
             .parse()
@@ -132,6 +192,54 @@ impl PostgresConnection {
             .map_err(|e| PostgresError::QueryFailed(e.to_string()))?;
         Ok(rows)
     }
+
+    /// Introspect database schema (simplified interface)
+    pub async fn introspect_schema(&self) -> Result<SchemaInfo, PostgresError> {
+        let full_schema = schema::introspect_schema(self).await?;
+
+        let tables = full_schema
+            .tables
+            .into_iter()
+            .map(|t| TableInfo {
+                schema_name: t.schema,
+                name: t.name,
+                columns: t
+                    .columns
+                    .into_iter()
+                    .map(|c| ColumnInfo {
+                        name: c.name,
+                        data_type: c.data_type,
+                        nullable: c.nullable,
+                    })
+                    .collect(),
+                primary_key: t.primary_key.unwrap_or_default(),
+            })
+            .collect();
+
+        let constraints = full_schema
+            .constraints
+            .into_iter()
+            .map(|c| ConstraintInfo {
+                name: c.name,
+                constraint_type: format!("{:?}", c.constraint_type),
+                table_name: c.table_name,
+                columns: c.columns,
+                foreign_table: c.foreign_table_name,
+                foreign_columns: c.foreign_columns,
+            })
+            .collect();
+
+        Ok(SchemaInfo {
+            database_name: full_schema.database_name,
+            tables,
+            constraints,
+        })
+    }
+
+    /// Close the connection
+    pub async fn close(&mut self) {
+        self.disconnect();
+    }
 }
 
 /// Connection pool for multiple concurrent connections
@@ -142,15 +250,15 @@ pub struct ConnectionPool {
 
 impl ConnectionPool {
     /// Create a new connection pool
-    pub fn new(connection_string: &str, pool_size: usize) -> Result<Self, PostgresError> {
+    pub fn new(connection_string: &str, pool_size: usize) -> Self {
         let connections = (0..pool_size)
             .map(|_| PostgresConnection::new(connection_string))
-            .collect::<Result<Vec<_>, _>>()?;
+            .collect();
 
-        Ok(Self {
+        Self {
             connection_string: connection_string.to_string(),
             connections,
-        })
+        }
     }
 
     /// Initialize all connections
@@ -169,6 +277,13 @@ mod tests {
     #[test]
     fn test_connection_new() {
         let conn = PostgresConnection::new("postgres://localhost/testdb");
+        assert!(!conn.is_connected());
+        assert_eq!(conn.database_name(), "testdb");
+    }
+
+    #[test]
+    fn test_connection_try_new() {
+        let conn = PostgresConnection::try_new("postgres://localhost/testdb");
         assert!(conn.is_ok());
         let conn = conn.unwrap();
         assert!(!conn.is_connected());
@@ -176,10 +291,9 @@ mod tests {
     }
 
     #[test]
-    fn test_connection_parse_error() {
-        // Invalid connection string should fail
-        let conn = PostgresConnection::new("not a valid connection string");
-        // tokio-postgres is lenient, so this may or may not fail
-        // depending on version
+    fn test_connection_default_database() {
+        // Connection string without explicit database uses "postgres"
+        let conn = PostgresConnection::new("postgres://localhost");
+        assert_eq!(conn.database_name(), "postgres");
     }
 }
